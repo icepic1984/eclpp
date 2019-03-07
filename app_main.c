@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 #include "app_main.h"
 
 #define DEFUN(name, fun, args)                                                 \
@@ -15,6 +16,31 @@ cl_object set_runtime(cl_object i)
 {
     int seconds = fix(i);
     return ecl_make_integer(seconds);
+}
+
+struct Image{
+    int width;
+    int height;
+};
+
+static Image image;
+// https://gitlab.com/embeddable-common-lisp/ecl/issues/324
+cl_object make_image()
+{
+    return ecl_make_foreign_data(ECL_NIL, sizeof(Image),&image);
+}
+
+cl_object set_width(cl_object image, cl_object width)
+{
+    Image* i = static_cast<Image*>(ecl_foreign_data_pointer_safe(image));
+    i->width = fix(width);
+    return image;
+}
+
+cl_object get_width(cl_object image)
+{
+    Image* i = static_cast<Image*>(ecl_foreign_data_pointer_safe(image));
+    return ecl_make_fixnum(i->width);
 }
 
 /* TODO: Are embedded quotes really needed? */
@@ -56,5 +82,8 @@ void run_swank() {
   cl_object cl_load =  ecl_make_symbol("LOAD","CL");
   cl_funcall(2, cl_load, cl_start_swank_path);
   DEFUN("set-runtime", set_runtime, 1);
+  DEFUN("make-image", make_image,0);
+  DEFUN("set-width", set_width,2);
+  DEFUN("get-width", get_width,1);
   return;
 }

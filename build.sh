@@ -13,6 +13,6 @@ export libs="-lm"
 export ldflags="-L. -Wl,-R -Wl,."
 export cflags="-DGC_LINUX_THREADS -D_REENTRANT -fPIC  -g -pipe -Wall"
 
-gcc $cflags -c app_main.c
-gcc -shared -Wl,-soname,libapp_main.so $ldflags -lecl -o libapp_main.so *o $libs
-gcc main.c $cflags $ldflags -lapp_main -lecl -o app
+g++ $cflags -c app_main.c
+g++ -shared -Wl,-soname,libapp_main.so $ldflags -lecl -o libapp_main.so *o $libs
+g++ main.c $cflags $ldflags -lapp_main -lecl -o app
